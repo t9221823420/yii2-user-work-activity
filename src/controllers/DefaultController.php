@@ -27,7 +27,7 @@ class DefaultController extends Controller
 		 * @var $dataProvider ActiveDataProvider
 		 */
 		
-		$gap = 5;
+		$gap = Yii::$app->settings->get('yozh.userworkactivity.GAP_TIME', 3);
 		
 		$dataProvider->query
 			->asArray();

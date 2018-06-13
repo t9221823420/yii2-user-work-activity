@@ -30,6 +30,11 @@ class DefaultController extends Controller
 		$gap = Yii::$app->settings->get('yozh.userworkactivity.GAP_TIME', 3);
 		
 		$dataProvider->query
+			->andWhere([
+				'not', [
+					'user_id' => 1,
+				]
+			])
 			->asArray();
 		
 		if( !Yii::$app->user->can( User::RBAC_ADMIN_ROLE ) ){

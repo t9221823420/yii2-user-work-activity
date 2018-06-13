@@ -6,7 +6,7 @@
  * Time: 17:09
  */
 
-include '_header.php';
+include __DIR__ . '/_header.php';
 
 /** @var \yii\web\View $this */
 include( Yii::getAlias($parentViewPath . 'view.php') );

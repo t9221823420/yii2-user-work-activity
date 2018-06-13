@@ -16,7 +16,7 @@ use kartik\helpers\Html;
 use yii\helpers\Url;
 use yozh\base\components\utils\ArrayHelper;
 
-include '_header.php';
+include __DIR__ . '/_header.php';
 
 $columns = [
 	//'url' => 'url',

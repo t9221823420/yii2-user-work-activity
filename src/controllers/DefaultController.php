@@ -18,7 +18,7 @@ class DefaultController extends Controller
 		return LogUserWorkActivity::class;
 	}
 	
-	public function actionIndex()
+	protected function _actionIndex()
 	{
 		$searchModel  = new LogUserWorkActivitySearch;
 		$dataProvider = $searchModel->search( Yii::$app->request->queryParams );
@@ -146,12 +146,19 @@ class DefaultController extends Controller
 			'allModels' => $resultFlat,
 		] );
 		
-		return $this->_render( 'index', [
+		return [
 			'searchModel'  => $searchModel,
 			'dataProvider' => $dataProvider,
 			'resultFlat'   => $resultFlat,
 			'resultTree'   => $resultTree,
-		] );
+		];
+	}
+	
+	public function actionIndex()
+	{
+		$params = $this->_actionIndex();
+		
+		return $this->_render( 'index', $params);
 		
 	}
 	

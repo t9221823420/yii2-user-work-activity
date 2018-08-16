@@ -24,34 +24,34 @@ $columns = [
 	
 	[
 		'attribute' => 'user_id',
-		'rowSpan'   => function( $model ) use ( $resultTree ) {
+		'rowSpan'   => function( $Model ) use ( $resultTree ) {
 			
-			$model = (object)$model;
+			$Model = (object)$Model;
 			
-			return $resultTree[ $model->user_id ]['recordsCount'];
+			return $resultTree[ $Model->user_id ]['recordsCount'];
 		},
 		'format'    => 'html',
-		'value'     => function( $model ) use ( $resultTree ) {
+		'value'     => function( $Model ) use ( $resultTree ) {
 			return ''
-                . $model['username'] . "<br />"
-                . $model['email'] . "<br />"
+                . $Model['username'] . "<br />"
+                . $Model['email'] . "<br />"
                 . Yii::t( 'app', 'Sum' )
-				. ": {$resultTree[$model['user_id']]['sum']} min";
+				. ": {$resultTree[$Model['user_id']]['sum']} min";
 		},
 	],
 	
 	[
 		'attribute' => 'date',
-		'rowSpan'   => function( $model ) use ( $resultTree ) {
+		'rowSpan'   => function( $Model ) use ( $resultTree ) {
 			
-			$model = (object)$model;
+			$Model = (object)$Model;
 			
-			return count( $resultTree[ $model->user_id ]['data'][ $model->date ]['intervals'] );
+			return count( $resultTree[ $Model->user_id ]['data'][ $Model->date ]['intervals'] );
 		},
 		'format'    => 'html',
-		'value'     => function( $model ) use ( $resultTree ) {
-			return $model['date'] . "<br />" . Yii::t( 'app', 'Sum' )
-				. ": {$resultTree[$model['user_id']]['data'][$model['date']]['sum']} min";
+		'value'     => function( $Model ) use ( $resultTree ) {
+			return $Model['date'] . "<br />" . Yii::t( 'app', 'Sum' )
+				. ": {$resultTree[$Model['user_id']]['data'][$Model['date']]['sum']} min";
 		},
 	
 	],
@@ -72,7 +72,7 @@ $columns = [
     
 	<?php Pjax::begin( [ 'id' => 'pjax-container' ] ); ?>
 	
-	<?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+	<?php // echo $this->render('_search', ['Model' => $searchModel]); ?>
 	
 	<?= GridView::widget( [
 		'dataProvider' => $dataProvider,

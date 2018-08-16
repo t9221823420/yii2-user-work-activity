@@ -164,7 +164,7 @@ class DefaultController extends Controller
 	{
 		$params = $this->_actionIndex();
 		
-		return $this->_render( 'index', $params);
+		return $this->render( 'index', $params);
 		
 	}
 	

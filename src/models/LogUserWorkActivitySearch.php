@@ -13,7 +13,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
-use yozh\crud\interfaces\ActiveRecordSearchInterface;
+use yozh\base\interfaces\models\ActiveRecordSearchInterface;
 
 
 class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRecordSearchInterface
@@ -67,9 +67,13 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 		] );
 		
 		if( !( $this->load($params) && $this->validate() ) ) {
+			
+			$this->filter_dateFrom = date( 'd.m.Y', strtotime("-10 days") );
+			
+			$query->andWhere( [ '>=', 'timestamp', date( "Y-m-d", strtotime( $this->filter_dateFrom ) ) ] );
+			
 			return $dataProvider;
 		}
-		
 		
 		if( $this->filter_dateFrom ?? false ) {
 			$query->andWhere( [ '>=', 'timestamp', date( "Y-m-d", strtotime( $this->filter_dateFrom ) ) ] );

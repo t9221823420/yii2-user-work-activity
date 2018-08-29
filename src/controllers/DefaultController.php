@@ -18,6 +18,14 @@ class DefaultController extends Controller
 		return LogUserWorkActivity::class;
 	}
 	
+	public function actionIndex()
+	{
+		$params = $this->_actionIndex();
+		
+		return $this->render( 'index', $params );
+		
+	}
+	
 	protected function _actionIndex()
 	{
 		$searchModel  = new LogUserWorkActivitySearch;
@@ -27,20 +35,20 @@ class DefaultController extends Controller
 		 * @var $dataProvider ActiveDataProvider
 		 */
 		
-		$gap = Yii::$app->settings->get('yozh.userworkactivity.GAP_TIME', 3);
-		
+		$gap = Yii::$app->settings->get( 'yozh.userworkactivity.GAP_TIME', 3 );
 		
 		$dataProvider->query
-			->andWhere([
+			->andWhere( [
 				'not', [
 					'user_id' => 1,
-				]
-			])
-			->asArray();
+				],
+			] )
+			->asArray()
+		;
 		
-		if( !Yii::$app->user->can( User::RBAC_ADMIN_ROLE ) ){
+		if( !Yii::$app->user->can( User::RBAC_ADMIN_ROLE ) ) {
 			$dataProvider->query
-				->andWhere(['user_id' => Yii::$app->user->getId()]);
+				->andWhere( [ 'user_id' => Yii::$app->user->getId() ] );
 		}
 		
 		$records    = $dataProvider->query->asArray()->all();
@@ -157,15 +165,8 @@ class DefaultController extends Controller
 			'dataProvider' => $dataProvider,
 			'resultFlat'   => $resultFlat,
 			'resultTree'   => $resultTree,
+			'userList'     => User::getList(),
 		];
-	}
-	
-	public function actionIndex()
-	{
-		$params = $this->_actionIndex();
-		
-		return $this->render( 'index', $params);
-		
 	}
 	
 	

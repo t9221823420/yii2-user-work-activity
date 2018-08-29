@@ -27,7 +27,7 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 	{
 		return [
 		    //[ [ 'filter_search', ], 'filter', 'filter' => '\yii\helpers\HtmlPurifier::process' ],
-			// [ [ 'id', ], 'integer' ], // from parent
+			 [ [ 'user_id', ], 'integer' ], // from parent
 			// [ [ 'title', ], 'string' ], // from parent
 			[ [ 'filter_dateFrom', 'filter_dateTo', ], 'date', 'format' => 'php:d.m.Y' ],
 			// [ [ 'filter_relation_title', ], 'string' ],
@@ -59,6 +59,7 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 			->joinWith( 'user' )
 			//->from( self::tableName() . ' selfAlias' )
 			//->joinWith( 'relation relationAlias' )
+			->orderBy("$tableName_LogUserWorkActivity.id DESC");
 		;
 		
 		$dataProvider = new ActiveDataProvider( [

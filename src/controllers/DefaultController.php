@@ -7,7 +7,9 @@ use Yii;
 use DateTime;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yozh\base\controllers\DefaultController as Controller;
+use yozh\helpdesk\models\HelpdeskReply;
 use yozh\userworkactivity\models\LogUserWorkActivity;
 use yozh\userworkactivity\models\LogUserWorkActivitySearch;
 
@@ -123,7 +125,7 @@ class DefaultController extends Controller
 				
 				$diff = ( new DateTime( $currentInterval['timeFrom'] ) )->diff( new DateTime( $timestamp ) );
 				
-				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['interval'] = $diff->i;
+				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['interval'] = $diff->d * 24 * 60 + $diff->h * 60 + $diff->i;
 				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['timeTo']   = $timestamp;
 				
 			}
@@ -156,16 +158,40 @@ class DefaultController extends Controller
 			}
 		}
 		
+		$records = ( new Query() )
+			->from( HelpdeskReply::tableName() )
+			->select( [
+				'DATE(created_at) AS dt',
+				'user_id',
+				'COUNT(*) AS count',
+			] )
+			->where( [
+				'user_id' => array_keys( $resultTree ),
+			] )
+			->groupBy( [
+				'user_id',
+				'DATE(created_at)',
+			] )
+			->orderBy( 'created_at DESC' )
+			->all()
+		;
+		
+		$resultReplies = [];
+		foreach( $records as $record ) {
+			$resultReplies[ $record['user_id'] ][ date( 'd.m.Y', strtotime( $record['dt'] ) ) ] = $record['count'];
+		}
+		
 		$dataProvider = new ArrayDataProvider( [
 			'allModels' => $resultFlat,
 		] );
 		
 		return [
-			'searchModel'  => $searchModel,
-			'dataProvider' => $dataProvider,
-			'resultFlat'   => $resultFlat,
-			'resultTree'   => $resultTree,
-			'userList'     => User::getList(),
+			'searchModel'   => $searchModel,
+			'dataProvider'  => $dataProvider,
+			'resultFlat'    => $resultFlat,
+			'resultTree'    => $resultTree,
+			'resultReplies' => $resultReplies,
+			'userList'      => User::getList( [], null, 'username'),
 		];
 	}
 	

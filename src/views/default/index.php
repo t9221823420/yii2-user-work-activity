@@ -49,15 +49,22 @@ $columns = [
 			return count( $resultTree[ $Model->user_id ]['data'][ $Model->date ]['intervals'] );
 		},
 		'format'    => 'html',
-		'value'     => function( $Model ) use ( $resultTree ) {
-			return $Model['date'] . "<br />" . Yii::t( 'app', 'Sum' )
-				. ": {$resultTree[$Model['user_id']]['data'][$Model['date']]['sum']} min";
+		'value'     => function( $Model ) use ( $resultTree, $resultReplies ) {
+			
+			$repliesCount = $resultReplies[ $Model['user_id'] ][ $Model['date'] ] ?? 0;
+			
+			return $Model['date']
+				. "<br />" . Yii::t( 'app', 'Sum' ) . ": {$resultTree[$Model['user_id']]['data'][$Model['date']]['sum']} min"
+				. "<br />" . Yii::t( 'app', 'Replies' ) . ": $repliesCount"
+				;
 		},
-	
+  
 	],
 	
-	'timeFrom',
-	'timeTo',
+	// поменяны местами из-за обратной сортировки
+	'timeTo:ntext:' . Yii::t('app', 'Time From'),
+	'timeFrom:ntext:' . Yii::t('app', 'Time To'),
+    
 	'interval:text:Min',
 
 ];

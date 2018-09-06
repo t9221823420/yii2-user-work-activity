@@ -71,7 +71,10 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 			
 			$this->filter_dateFrom = date( 'd.m.Y', strtotime("-10 days") );
 			
-			$query->andWhere( [ '>=', 'timestamp', date( "Y-m-d", strtotime( $this->filter_dateFrom ) ) ] );
+			$query
+				->andWhere( [ '>=', 'timestamp', date( "Y-m-d", strtotime( $this->filter_dateFrom ) ) ] )
+				->andWhere( '1=0' );
+			;
 			
 			return $dataProvider;
 		}
@@ -90,13 +93,12 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 			//$this->filter_dateTo = $this->filter_dateFrom;  // some default params, but not less $this->dateFrom
 		}
 		
-		/*
 		// grid filtering conditions
 		$query->andFilterWhere( [
-			'id'    => $this->id,
-			'title' => $this->title,
+			'user_id'    => $this->user_id,
 		] );
 		
+		/*
         $query->andFilterWhere( [ 'or',
 			[ 'like', 'user.email', $this->filter_search ],
 			[ 'like', 'user.phone', $this->filter_search ],

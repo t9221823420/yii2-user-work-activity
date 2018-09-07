@@ -36,9 +36,6 @@ class DefaultController extends Controller
 		/**
 		 * @var $dataProvider ActiveDataProvider
 		 */
-		
-		$gap = Yii::$app->settings->get( 'yozh.userworkactivity.GAP_TIME', 3 );
-		
 		$dataProvider->query
 			->andWhere( [
 				'not', [
@@ -53,145 +50,150 @@ class DefaultController extends Controller
 				->andWhere( [ 'user_id' => Yii::$app->user->getId() ] );
 		}
 		
-		$records    = $dataProvider->query->asArray()->all();
-		$resultTree = [];
-		$resultFlat = [];
-		foreach( $records as $record ) {
+		if( $records = $dataProvider->query->asArray()->all() ) {
 			
-			$record = (object)$record;
+			$gap = Yii::$app->settings->get( 'yozh\userworkactivity\models\LogUserWorkActivity::GAP_TIME', 8 );
 			
-			//$timestamp = date( 'H:i d.m.Y', strtotime( $record->timestamp ) );
-			$timestamp = $record->timestamp;
-			
-			if( !$record->user_id ) {
-				continue;
-			}
-			
-			$currentDay = date( 'd.m.Y', strtotime( $timestamp ) );
-			
-			$newDate = function( $record ) use ( $currentDay ) {
-				return [
-					'sum'       => 0,
-					'intervals' => [],
-				];
-			};
-			
-			$newInterval = function( $timestamp ) {
-				return [
-					'timeFrom' => $timestamp,
-					'timeTo'   => $timestamp,
-					'interval' => 0,
-				];
-			};
-			
-			if( !isset( $resultTree[ $record->user_id ] ) ) {
+			$resultTree = [];
+			$resultFlat = [];
+			foreach( $records as $record ) {
 				
-				$resultTree[ $record->user_id ] = [
-					'user_id'      => $record->user_id,
-					'username'     => $record->username,
-					'email'        => $record->email,
-					'sum'          => 0,
-					'recordsCount' => 0,
-					'data'         => [],
-				];
+				$record = (object)$record;
 				
-			}
-			
-			if( !isset( $resultTree[ $record->user_id ]['data'][ $currentDay ] ) ) {
-				$resultTree[ $record->user_id ]['data'][ $currentDay ] = $newDate( $currentDay );
-			}
-			
-			$currentInterval = end( $resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'] );
-			
-			if( !$currentInterval ) {
+				//$timestamp = date( 'H:i d.m.Y', strtotime( $record->timestamp ) );
+				$timestamp = $record->timestamp;
 				
-				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $timestamp ] = $newInterval( $timestamp );
-				continue;
-			}
-			
-			$diff = ( new DateTime( $currentInterval['timeTo'] ) )->diff( new DateTime( $timestamp ) );
-			
-			if( $diff->i > $gap ) {
-				
-				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $timestamp ] = $newInterval( $timestamp );
-				
-				if( $currentInterval['interval'] == 0 ) {
-					unset( $resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ] );
+				if( !$record->user_id ) {
 					continue;
 				}
 				
-			}
-			else {
+				$currentDay = date( 'd.m.Y', strtotime( $timestamp ) );
 				
-				$diff = ( new DateTime( $currentInterval['timeFrom'] ) )->diff( new DateTime( $timestamp ) );
+				$newDate = function( $record ) use ( $currentDay ) {
+					return [
+						'sum'       => 0,
+						'intervals' => [],
+					];
+				};
 				
-				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['interval'] = $diff->d * 24 * 60 + $diff->h * 60 + $diff->i;
-				$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['timeTo']   = $timestamp;
+				$newInterval = function( $timestamp ) {
+					return [
+						'timeFrom' => $timestamp,
+						'timeTo'   => $timestamp,
+						'interval' => 0,
+					];
+				};
 				
-			}
-			
-		}
-		
-		foreach( $resultTree as $user_id => &$userData ) {
-			foreach( $userData['data'] as $date => &$dateData ) {
-				foreach( $dateData['intervals'] as $timestamp => &$interval ) {
+				if( !isset( $resultTree[ $record->user_id ] ) ) {
 					
-					$userData['recordsCount']++;
-					
-					$userData['sum'] += $interval['interval'];
-					$dateData['sum'] += $interval['interval'];
-					
-					$key = $user_id . ' - ' . $interval['timeFrom'] . ' - ' . $interval['interval'];
-					
-					$resultFlat[ $key ] = [
-						'user_id'  => $userData['user_id'],
-						'username' => $userData['username'],
-						'email'    => $userData['email'],
-						'date'     => $date,
-						'timeFrom' => date( 'H:i:s', strtotime( $interval['timeFrom'] ) ),
-						'timeTo'   => date( 'H:i:s', strtotime( $interval['timeTo'] ) ),
-						'interval' => $interval['interval'],
+					$resultTree[ $record->user_id ] = [
+						'user_id'      => $record->user_id,
+						'username'     => $record->username,
+						'email'        => $record->email,
+						'sum'          => 0,
+						'recordsCount' => 0,
+						'data'         => [],
 					];
 					
 				}
 				
+				if( !isset( $resultTree[ $record->user_id ]['data'][ $currentDay ] ) ) {
+					$resultTree[ $record->user_id ]['data'][ $currentDay ] = $newDate( $currentDay );
+				}
+				
+				$currentInterval = end( $resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'] );
+				
+				if( !$currentInterval ) {
+					
+					$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $timestamp ] = $newInterval( $timestamp );
+					continue;
+				}
+				
+				$diff = ( new DateTime( $currentInterval['timeTo'] ) )->diff( new DateTime( $timestamp ) );
+				
+				if( $diff->i > $gap ) {
+					
+					$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $timestamp ] = $newInterval( $timestamp );
+					
+					if( $currentInterval['interval'] == 0 ) {
+						unset( $resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ] );
+						continue;
+					}
+					
+				}
+				else {
+					
+					$diff = ( new DateTime( $currentInterval['timeFrom'] ) )->diff( new DateTime( $timestamp ) );
+					
+					$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['interval'] = $diff->d * 24 * 60 + $diff->h * 60 + $diff->i;
+					$resultTree[ $record->user_id ]['data'][ $currentDay ]['intervals'][ $currentInterval['timeFrom'] ]['timeTo']   = $timestamp;
+					
+				}
+				
 			}
-		}
-		
-		$records = ( new Query() )
-			->from( HelpdeskReply::tableName() )
-			->select( [
-				'DATE(created_at) AS dt',
-				'user_id',
-				'COUNT(*) AS count',
-			] )
-			->where( [
-				'user_id' => array_keys( $resultTree ),
-			] )
-			->groupBy( [
-				'user_id',
-				'DATE(created_at)',
-			] )
-			->orderBy( 'created_at DESC' )
-			->all()
-		;
-		
-		$resultReplies = [];
-		foreach( $records as $record ) {
-			$resultReplies[ $record['user_id'] ][ date( 'd.m.Y', strtotime( $record['dt'] ) ) ] = $record['count'];
+			
+			foreach( $resultTree as $user_id => &$userData ) {
+				foreach( $userData['data'] as $date => &$dateData ) {
+					foreach( $dateData['intervals'] as $timestamp => &$interval ) {
+						
+						$userData['recordsCount']++;
+						
+						$userData['sum'] += $interval['interval'];
+						$dateData['sum'] += $interval['interval'];
+						
+						$key = $user_id . ' - ' . $interval['timeFrom'] . ' - ' . $interval['interval'];
+						
+						$resultFlat[ $key ] = [
+							'user_id'  => $userData['user_id'],
+							'username' => $userData['username'],
+							'email'    => $userData['email'],
+							'date'     => $date,
+							'timeFrom' => date( 'H:i:s', strtotime( $interval['timeFrom'] ) ),
+							'timeTo'   => date( 'H:i:s', strtotime( $interval['timeTo'] ) ),
+							'interval' => $interval['interval'],
+						];
+						
+					}
+					
+				}
+			}
+			
+			$records = ( new Query() )
+				->from( HelpdeskReply::tableName() )
+				->select( [
+					'DATE(created_at) AS dt',
+					'user_id',
+					'COUNT(*) AS count',
+				] )
+				->where( [
+					'user_id' => array_keys( $resultTree ),
+				] )
+				->groupBy( [
+					'user_id',
+					'DATE(created_at)',
+				] )
+				->orderBy( 'created_at DESC' )
+				->all()
+			;
+			
+			$resultReplies = [];
+			foreach( $records as $record ) {
+				$resultReplies[ $record['user_id'] ][ date( 'd.m.Y', strtotime( $record['dt'] ) ) ] = $record['count'];
+			}
+			
 		}
 		
 		$dataProvider = new ArrayDataProvider( [
-			'allModels' => $resultFlat,
+			'allModels' => $resultFlat ?? [],
 		] );
 		
 		return [
 			'searchModel'   => $searchModel,
 			'dataProvider'  => $dataProvider,
-			'resultFlat'    => $resultFlat,
-			'resultTree'    => $resultTree,
-			'resultReplies' => $resultReplies,
-			'userList'      => User::getList( [], null, 'username'),
+			'resultFlat'    => $resultFlat ?? [],
+			'resultTree'    => $resultTree ?? [],
+			'resultReplies' => $resultReplies ?? [],
+			'userList'      => User::getList( [], null, 'username' ),
 		];
 	}
 	

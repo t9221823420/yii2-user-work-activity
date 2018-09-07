@@ -13,6 +13,8 @@ use yozh\crud\models\BaseModel as ActiveRecord;
 
 class LogUserWorkActivity extends ActiveRecord
 {
+	const GAP_TIMEf = 5; // time between last calculated and next activity of user
+	
 	public static function tableName()
 	{
 		return '{{%log_user_work_activity}}';

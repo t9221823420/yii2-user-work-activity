@@ -14,7 +14,7 @@ use yii\widgets\Pjax;
 use yozh\widget\widgets\grid\GridView;
 use kartik\helpers\Html;
 use yii\helpers\Url;
-use yozh\base\components\utils\ArrayHelper;
+use yozh\base\components\helpers\ArrayHelper;
 
 include __DIR__ . '/_header.php';
 

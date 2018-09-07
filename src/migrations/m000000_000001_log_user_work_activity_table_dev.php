@@ -9,14 +9,26 @@
 
 use yozh\base\components\db\Migration;
 use yozh\base\components\db\Schema;
-use yozh\base\components\utils\ArrayHelper;
+use yozh\base\components\helpers\ArrayHelper;
+use yozh\settings\models\Settings;
+use yozh\userworkactivity\models\LogUserWorkActivity;
 
 class m000000_000001_log_user_work_activity_table_dev extends Migration
 {
-	protected static $_table = 'log_user_work_activity';
+	//protected static $_table = '{{%log_user_work_activity}}';
+	
+	public function __construct( array $config = [] )
+	{
+		
+		static::$_table = LogUserWorkActivity::getRawTableName();
+		
+		parent::__construct( $config );
+	}
 	
 	public function safeUp( $params = [] )
 	{
+		
+		Settings::addSystemParam( LogUserWorkActivity::class . '::GAP_TIME', 5 );
 		
 		parent::safeUp( [
 			'mode' => 1 ? self::ALTER_MODE_UPDATE : self::ALTER_MODE_IGNORE,
@@ -30,7 +42,7 @@ class m000000_000001_log_user_work_activity_table_dev extends Migration
 		return parent::getColumns( [
 			//'id' => $this->primaryKey(),
 			
-			'url'       => $this->string(1023),
+			'url'       => $this->string( 1023 ),
 			'route'     => $this->string(),
 			'timestamp' => $this->timestamp(),
 			'user_id'   => $this->integer(),

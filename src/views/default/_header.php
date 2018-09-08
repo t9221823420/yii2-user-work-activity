@@ -11,4 +11,4 @@ $parentViewPath = '@yozh/crud/views/default';
 $_params_['parentViewPath'] = $parentViewPath;
 
 /** @var \yii\web\View $this */
-include( Yii::getAlias($parentViewPath . '/_header.php') );
+include( Yii::getAlias($parentViewPath . '/' . basename( __FILE__ ) ) );

@@ -9,4 +9,4 @@
 include __DIR__ . '/_header.php';
 
 /** @var \yii\web\View $this */
-include( Yii::getAlias($parentViewPath . 'view.php') );
+include( Yii::getAlias($parentViewPath . '/' . basename( __FILE__ ) ) );

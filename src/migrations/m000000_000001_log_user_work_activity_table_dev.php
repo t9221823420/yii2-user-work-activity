@@ -31,7 +31,7 @@ class m000000_000001_log_user_work_activity_table_dev extends Migration
 		Settings::addSystemParam( LogUserWorkActivity::class . '::GAP_TIME', 5 );
 		
 		parent::safeUp( [
-			'mode' => 1 ? self::ALTER_MODE_UPDATE : self::ALTER_MODE_IGNORE,
+			'mode' => 1 ? static::ALTER_MODE_UPDATE : static::ALTER_MODE_IGNORE,
 		] );
 		
 	}

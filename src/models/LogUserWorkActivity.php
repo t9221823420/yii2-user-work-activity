@@ -9,7 +9,7 @@
 namespace yozh\userworkactivity\models;
 
 use common\models\User;
-use yozh\crud\models\BaseModel as ActiveRecord;
+use yozh\crud\models\BaseActiveRecord as ActiveRecord;
 
 class LogUserWorkActivity extends ActiveRecord
 {

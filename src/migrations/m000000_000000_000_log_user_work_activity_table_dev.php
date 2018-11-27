@@ -13,16 +13,14 @@ use yozh\base\components\helpers\ArrayHelper;
 use yozh\settings\models\Settings;
 use yozh\userworkactivity\models\LogUserWorkActivity;
 
-class m000000_000001_log_user_work_activity_table_dev extends Migration
+class m000000_000000_000_log_user_work_activity_table_dev extends Migration
 {
-	//protected static $_table = '{{%log_user_work_activity}}';
-	
-	public function __construct( array $config = [] )
-	{
+	public function __construct( array $config = [] ) {
 		
 		static::$_table = LogUserWorkActivity::getRawTableName();
 		
 		parent::__construct( $config );
+		
 	}
 	
 	public function safeUp( $params = [] )

@@ -15,9 +15,11 @@ use yozh\userworkactivity\models\LogUserWorkActivity;
 
 class m000000_000000_000_log_user_work_activity_table_dev extends Migration
 {
+	protected static $_table;
+	
 	public function __construct( array $config = [] ) {
 		
-		static::$_table = LogUserWorkActivity::getRawTableName();
+		static::$_table = static::$_table ?? LogUserWorkActivity::getRawTableName();
 		
 		parent::__construct( $config );
 		

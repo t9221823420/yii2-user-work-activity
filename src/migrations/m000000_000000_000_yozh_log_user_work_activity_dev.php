@@ -13,7 +13,7 @@ use yozh\base\components\helpers\ArrayHelper;
 use yozh\settings\models\Settings;
 use yozh\userworkactivity\models\LogUserWorkActivity;
 
-class m000000_000000_000_log_user_work_activity_table_dev extends Migration
+class m000000_000000_000_yozh_log_user_work_activity_dev extends Migration
 {
 	protected static $_table;
 	

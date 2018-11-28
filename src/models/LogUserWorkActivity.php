@@ -17,7 +17,7 @@ class LogUserWorkActivity extends ActiveRecord
 	
 	public static function tableName()
 	{
-		return '{{%log_user_work_activity}}';
+		return '{{%yozh_log_user_work_activity}}';
 	}
 	
 	public function rules()

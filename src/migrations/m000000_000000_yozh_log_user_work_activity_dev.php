@@ -13,7 +13,7 @@ use yozh\base\components\helpers\ArrayHelper;
 use yozh\settings\models\Settings;
 use yozh\userworkactivity\models\LogUserWorkActivity;
 
-class m000000_000000_000_yozh_log_user_work_activity_dev extends Migration
+class m000000_000000_yozh_log_user_work_activity_dev extends Migration
 {
 	protected static $_table;
 	
@@ -30,9 +30,7 @@ class m000000_000000_000_yozh_log_user_work_activity_dev extends Migration
 		
 		Settings::addSystemParam( LogUserWorkActivity::class . '::GAP_TIME', 5 );
 		
-		parent::safeUp( [
-			'mode' => 1 ? static::ALTER_MODE_UPDATE : static::ALTER_MODE_IGNORE,
-		] );
+		parent::safeUp( $params );
 		
 	}
 	

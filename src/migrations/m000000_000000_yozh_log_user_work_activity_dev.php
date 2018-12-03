@@ -30,7 +30,7 @@ class m000000_000000_yozh_log_user_work_activity_dev extends Migration
 		
 		Settings::addSystemParam( LogUserWorkActivity::class . '::GAP_TIME', 5 );
 		
-		parent::safeUp( $params );
+		return parent::safeUp( $params );
 		
 	}
 	

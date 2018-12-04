@@ -20,15 +20,25 @@ class LogUserWorkActivity extends ActiveRecord
 		return '{{%yozh_log_user_work_activity}}';
 	}
 	
-	public function rules()
+	public function rules( $rules = [], $update = false )
 	{
-		return [
-			[ [ 'url', 'route', 'user_id', ], 'required' ],
-			[ [ 'user_id' ], 'integer' ],
-			[ [ 'url' ], 'string', 'max' => 1023 ],
-			[ [ 'route' ], 'string', 'max' => 255 ],
+		static $_rules;
 		
-		];
+		if( !$_rules || $update ) {
+			
+			$_rules = parent::rules( \yozh\base\components\validators\Validator::merge( [
+				
+				[ [ 'url', 'route', 'user_id', ], 'required' ],
+				[ [ 'user_id' ], 'integer' ],
+				[ [ 'url' ], 'string', 'max' => 1023 ],
+				[ [ 'route' ], 'string', 'max' => 255 ],
+			
+			], $rules ) );
+			
+		}
+		
+		return $_rules;
+		
 	}
 	
 	public function getUser()

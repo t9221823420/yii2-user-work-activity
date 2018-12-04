@@ -15,24 +15,30 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yozh\base\interfaces\models\ActiveRecordSearchInterface;
 
-
 class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRecordSearchInterface
 {
-    // public $filter_search;
+	// public $filter_search;
 	// public $filter_relation_title;
 	public $filter_dateFrom;
 	public $filter_dateTo;
 	
-	public function rules()
+	public function rules( $rules = [], $update = false )
 	{
-		return [
-		    //[ [ 'filter_search', ], 'filter', 'filter' => '\yii\helpers\HtmlPurifier::process' ],
-			 [ [ 'user_id', ], 'integer' ], // from parent
-			// [ [ 'title', ], 'string' ], // from parent
-			[ [ 'filter_dateFrom', 'filter_dateTo', ], 'date', 'format' => 'php:d.m.Y' ],
-			// [ [ 'filter_relation_title', ], 'string' ],
-			// [ [ 'filter_dateFrom', 'filter_dateTo', ], 'date', 'format' => 'php:d.m.Y' ],
-		];
+		static $_rules;
+		
+		if( !$_rules || $update ) {
+			
+			$_rules = parent::rules( \yozh\base\components\validators\Validator::merge( [
+				
+				[ [ 'user_id', ], 'integer' ], // from parent
+				[ [ 'filter_dateFrom', 'filter_dateTo', ], 'date', 'format' => 'php:d.m.Y' ],
+			
+			], $rules ) );
+			
+		}
+		
+		return $_rules;
+		
 	}
 	
 	public function scenarios()
@@ -55,26 +61,26 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 		 * @var $query ActiveQuery
 		 */
 		$query = parent::find()
-			->select( "$tableName_LogUserWorkActivity.*, $tableName_User.username, $tableName_User.email" )
-			->joinWith( 'user' )
+		               ->select( "$tableName_LogUserWorkActivity.*, $tableName_User.username, $tableName_User.email" )
+		               ->joinWith( 'user' )
 			//->from( self::tableName() . ' selfAlias' )
 			//->joinWith( 'relation relationAlias' )
-			->orderBy("$tableName_LogUserWorkActivity.id DESC");
-		;
+			           ->orderBy( "$tableName_LogUserWorkActivity.id DESC" )
+		;;
 		
 		$dataProvider = new ActiveDataProvider( [
 			'query' => $query,
-			'sort' => [ 'defaultOrder' => [ 'id' => SORT_DESC ] ],
+			'sort'  => [ 'defaultOrder' => [ 'id' => SORT_DESC ] ],
 		] );
 		
-		if( !( $this->load($params) && $this->validate() ) ) {
+		if( !( $this->load( $params ) && $this->validate() ) ) {
 			
-			$this->filter_dateFrom = date( 'd.m.Y', strtotime("-10 days") );
+			$this->filter_dateFrom = date( 'd.m.Y', strtotime( "-10 days" ) );
 			
 			$query
 				->andWhere( [ '>=', 'timestamp', date( "Y-m-d", strtotime( $this->filter_dateFrom ) ) ] )
-				->andWhere( '1=0' );
-			;
+				->andWhere( '1=0' )
+			;;
 			
 			return $dataProvider;
 		}
@@ -86,7 +92,7 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 			//$this->filter_dateFrom = date( 'Y-m-d H:i:s' ); // some default params
 		}
 		
-		if( $this->filter_dateTo ?? false  ) {
+		if( $this->filter_dateTo ?? false ) {
 			$query->andWhere( [ '<=', 'timestamp', date( "Y-m-d", strtotime( $this->filter_dateTo . ' +1 day' ) ) ] );
 		}
 		else {
@@ -95,7 +101,7 @@ class LogUserWorkActivitySearch extends LogUserWorkActivity implements ActiveRec
 		
 		// grid filtering conditions
 		$query->andFilterWhere( [
-			'user_id'    => $this->user_id,
+			'user_id' => $this->user_id,
 		] );
 		
 		/*

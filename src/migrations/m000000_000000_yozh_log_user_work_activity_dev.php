@@ -49,7 +49,7 @@ class m000000_000000_yozh_log_user_work_activity_dev extends Migration
 	
 	public function getReferences( $references = [] )
 	{
-		return ArrayHelper::merge( [
+		return parent::getReferences( array_merge( [
 			
 			[
 				'refTable'   => \common\models\User::tableName(),
@@ -58,6 +58,6 @@ class m000000_000000_yozh_log_user_work_activity_dev extends Migration
 				//'onDelete'   => self::CONSTRAINTS_ACTION_RESTRICT,
 			],
 		
-		], $references );
+		], $references ) );
 	}
 }

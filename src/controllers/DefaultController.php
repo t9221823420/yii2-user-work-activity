@@ -30,8 +30,8 @@ class DefaultController extends Controller
 	
 	protected function _actionIndex()
 	{
-		$searchModel  = new LogUserWorkActivitySearch;
-		$dataProvider = $searchModel->search( Yii::$app->request->queryParams );
+		$ModelSearch  = new LogUserWorkActivitySearch;
+		$dataProvider = $ModelSearch->search( Yii::$app->request->queryParams );
 		
 		/**
 		 * @var $dataProvider ActiveDataProvider
@@ -188,7 +188,7 @@ class DefaultController extends Controller
 		] );
 		
 		return [
-			'searchModel'   => $searchModel,
+			'ModelSearch'   => $ModelSearch,
 			'dataProvider'  => $dataProvider,
 			'resultFlat'    => $resultFlat ?? [],
 			'resultTree'    => $resultTree ?? [],

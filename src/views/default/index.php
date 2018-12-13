@@ -79,11 +79,11 @@ $columns = [
     
 	<?php Pjax::begin( [ 'id' => 'pjax-container' ] ); ?>
 	
-	<?php // echo $this->render('_search', ['Model' => $searchModel]); ?>
+	<?php // echo $this->render('_search', ['Model' => $ModelSearch]); ?>
 	
 	<?= GridView::widget( [
 		'dataProvider' => $dataProvider,
-		//'filterModel' => $searchModel,
+		//'filterModel' => $ModelSearch,
 		//'layout'       => "{items}\n{pager}",
 		//'showHeader'   => false,
 		'tableOptions' => [

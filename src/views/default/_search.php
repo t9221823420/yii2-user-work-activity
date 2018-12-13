@@ -18,7 +18,7 @@ use yozh\form\ActiveForm;
 		] ); ?>
 	
 	<?php
-	$fields['user'] = $form->field( $searchModel, 'user_id' )
+	$fields['user'] = $form->field( $ModelSearch, 'user_id' )
 	                       ->label( Yii::t( 'app', 'User' ) )
 	                       ->dropDownList( $userList, [
 		                       'prompt' => Yii::t( 'app', 'Select user' ),

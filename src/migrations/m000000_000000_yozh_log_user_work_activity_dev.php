@@ -17,21 +17,18 @@ class m000000_000000_yozh_log_user_work_activity_dev extends Migration
 {
 	protected static $_table;
 	
-	public function __construct( array $config = [] ) {
-		
+	public function __construct( array $config = [] )
+	{
 		static::$_table = static::$_table ?? LogUserWorkActivity::getRawTableName();
 		
 		parent::__construct( $config );
-		
 	}
 	
 	public function safeUp( $params = [] )
 	{
-		
-		Settings::addSystemParam( LogUserWorkActivity::class . '::GAP_TIME', 5 );
+		Settings::addSystemParam( LogUserWorkActivity::class . '::GAP_TIME', LogUserWorkActivity::GAP_TIME );
 		
 		return parent::safeUp( $params );
-		
 	}
 	
 	public function getColumns( $columns = [] )
